@@ -1,5 +1,9 @@
 public class demoSort {
-   
+
+    
+    /*This method takes 3 arguments, the List of objects to sort, the field to sort, 
+    and the order, asc or desc*/
+    
     public static void sortList(List<sObject> items, String sortField, String order){
         /*I must give credit where it is due as the sorting algorithm I am using is the 
         one supplied by Andrew Waite here: http://blog.sforce.com/sforce/2008/09/sorting-collect.html */
@@ -13,7 +17,7 @@ public class demoSort {
         if(items[0].getSObjectType().getDescribe().fields.getMap().get(sortField).getDescribe().getType().Name() == 'REFERENCE'){
             isSortFieldReference = true;
             referenceName = new Map<Id,String>();
-            
+            system.debug('test');
             /*Determine the type of this object and populate the Id to Name map*/
             Set<Id> referenceIds = new Set<Id>();
             for(sObject s : items){
@@ -91,46 +95,4 @@ public class demoSort {
         }
     }
     
-    /*Some test methods that provide 100% coverage 
-    public static testMethod void sortAscendingTest(){
-        
-        List<Opportunity> opps = new List<Opportunity>();
-        for(integer i = 0; i<1000; i++){
-            opps.add(new Opportunity(Name = 'test' + i, Amount = 1000 * Math.random()));
-        }
-        
-        Test.startTest();
-        Long start = system.currentTimeMillis();
-        sortList(opps,'Amount','asc');
-        system.debug(system.currentTimeMillis() - start);
-        Test.stopTest();
-        
-        //Assert the list was sorted correctly
-        Decimal assertValue = -1;
-        for(Opportunity o : opps) {
-            System.debug('Opp value: ' + o.amount);
-            System.assert(assertValue <= o.amount);
-            assertValue = o.amount;
-        }  
-    }
-    
-    public static testMethod void sortDescendingTest(){
-        
-        List<Opportunity> opps = new List<Opportunity>();
-        for(integer i = 0; i<1000; i++){
-            opps.add(new Opportunity(Name = 'test' + i, Amount = 1000 * Math.random()));
-        }
-        
-        Test.startTest();
-        sortList(opps,'Amount','desc');
-        Test.stopTest();
-        
-        //Assert the list was sorted correctly
-        Decimal assertValue = 1001;
-        for(Opportunity o : opps) {
-            System.debug('Opp value: ' + o.amount);
-            System.assert(assertValue >= o.amount);
-            assertValue = o.amount;
-        }  
-    }*/
 }
