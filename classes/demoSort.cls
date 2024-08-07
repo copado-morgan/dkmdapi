@@ -1,8 +1,5 @@
 public class demoSort {
-
-    /*This method takes 3 arguments, the List of objects to sort, the field to sort, 
-    and the order, asc or desc*/
-    
+   
     public static void sortList(List<sObject> items, String sortField, String order){
         /*I must give credit where it is due as the sorting algorithm I am using is the 
         one supplied by Andrew Waite here: http://blog.sforce.com/sforce/2008/09/sorting-collect.html */
