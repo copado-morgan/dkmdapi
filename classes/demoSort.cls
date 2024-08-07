@@ -17,7 +17,7 @@ public class demoSort {
         if(items[0].getSObjectType().getDescribe().fields.getMap().get(sortField).getDescribe().getType().Name() == 'REFERENCE'){
             isSortFieldReference = true;
             referenceName = new Map<Id,String>();
-            
+            system.debug('test');
             /*Determine the type of this object and populate the Id to Name map*/
             Set<Id> referenceIds = new Set<Id>();
             for(sObject s : items){
