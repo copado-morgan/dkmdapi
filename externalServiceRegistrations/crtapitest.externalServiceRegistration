@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Copado Robotic Testing API&apos;s</description>
+    <label>crtapitest</label>
+    <namedCredentialReference>CRT</namedCredentialReference>
+    <operations>
+        <active>false</active>
+        <name>getnewuiorganization</name>
+    </operations>
+    <operations>
+        <active>false</active>
+        <name>getnewuiorganizationbyorganizationid</name>
+    </operations>
+    <operations>
+        <active>false</active>
+        <name>getnextprojectjobsnapshotbyprojectidandtestsuiteid</name>
+    </operations>
+    <operations>
+        <active>true</active>
+        <name>getpacev4projectsjobsbuildsbyprojectidandtestsuiteidandbuildnumber</name>
+    </operations>
+    <operations>
+        <active>false</active>
+        <name>getpacev4projectsrobotsbyprojectid</name>
+    </operations>
+    <operations>
+        <active>false</active>
+        <name>getpacev4userx2dparameters</name>
+    </operations>
+    <operations>
+        <active>true</active>
+        <name>postpacev4projectsjobsbuildsbyprojectidandtestsuiteid</name>
+    </operations>
+    <registrationProviderType>Custom</registrationProviderType>
+    <schema>{
+  &quot;openapi&quot;: &quot;3.0.0&quot;,
+  &quot;info&quot;: {
+    &quot;title&quot;: &quot;Copado CRT Integration - API doc&quot;,
+    &quot;description&quot;: &quot;CRT API endpoints to be consumed by Copado Quality Tools extension. Each method requires APIKey based authentication&quot;,
+    &quot;contact&quot;: {
+      &quot;name&quot;: &quot;Mert Yalti &amp; Manuel Moya&quot;,
+      &quot;url&quot;: &quot;https://help.pace.qentinel.com/docs/current/index.html&quot;,
+      &quot;email&quot;: &quot;my@copado.com&quot;
+    },
+    &quot;version&quot;: &quot;1.0.1-CRTQ2&quot;
+  },
+  &quot;servers&quot;: [
+    {
+      &quot;url&quot;: &quot;https://api.qa.robotic.copado.com&quot;
+    },
+    {
+      &quot;url&quot;: &quot;https://api.qa.pace.qentinel.com&quot;
+    },
+    {
+      &quot;url&quot;: &quot;https://api.robotic.copado.com&quot;
+    }
+  ],
+  &quot;tags&quot;: [
+    {
+      &quot;name&quot;: &quot;Authentication&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Extension Configuration&quot;,
+      &quot;description&quot;: &quot;Copado Extension Configuration endpoints for CRT Integarion&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Copado Test Configuration&quot;,
+      &quot;description&quot;: &quot;Copado test record configuration for CRT Tests which includes robot, test suite(s) and test case listing.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Test Execution&quot;,
+      &quot;description&quot;: &quot;Includes test run endpoints for CRT test execution&quot;
+    },
+    {
+      &quot;name&quot;: &quot;Results&quot;,
+      &quot;description&quot;: &quot;Contains CRT test run results and details&quot;
+    }
+  ],
+  &quot;paths&quot;: {
+    &quot;/pace/v4/user-parameters&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Authentication&quot;
+        ],
+        &quot;summary&quot;: &quot;Handshake - get user parameters&quot;,
+        &quot;description&quot;: &quot;# Authentication Validation\n\nThis is a dummy callout to a information get endpoint to verify given authentication details from Copado for CRT is correct.\n\nIf this call returns 200-OK then the authentication is granted otherwise this call will return 401-UnAuthorized which will indicate authentication fails.&quot;,
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/success_handshake&quot;
+                }
+              }
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;UnAuthorized&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/auth_fail&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/new/ui/organization&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Extension Configuration&quot;
+        ],
+        &quot;summary&quot;: &quot;1) List Organizations&quot;,
+        &quot;description&quot;: &quot;# Listing organization in the CRT environment.\nResults contains:\n* Organization permissions for the requester user (can_edit or can_view). Copado only requires view permissions\n* Domain if there is any\n* Organization Name : required and needs to be stored for better UX\n* Owner details : owner.name is needed to show in the selection table\n* Type : optional\n* Id: Copado integration requires this id to be stored&quot;,
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/success_list_organization&quot;
+                }
+              }
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;UnAuthorized&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/auth_fail&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/new/ui/organization/{organizationId}&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Extension Configuration&quot;
+        ],
+        &quot;summary&quot;: &quot;2) List Projects From Organization&quot;,
+        &quot;description&quot;: &quot;# Listing projects in given CRT organization\n\nAssignments node contains projects assigned to the given organization which contains:\n\n* description of the project: Nice to have in Copado\n* id : required to be stored in the extesion configuration\n* name: needs to be stored for better UX\n* role: TBC with Juha Marcus\n* permissions min view permission is necessary&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;organizationId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/success_list_projects&quot;
+                }
+              }
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;UnAuthorized&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/auth_fail&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/pace/v4/projects/{projectId}/robots&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Copado Test Configuration&quot;
+        ],
+        &quot;summary&quot;: &quot;3) List Robots and Suites From Project&quot;,
+        &quot;description&quot;: &quot;# Listing robots and their test suits from given project\n\nOn the test record configuration we should follow the same grouping structure CRT has so given test suites are assigned to robots. This endpoints gives us a list of robots containing their test suite details.\n\nData array node is the main node that contains robots and test suites.\n\n*Robot details contain:*\n\n* id: must be store since it will be used to retrieve specific robot details\n* name: needs to be stored for better UX\n* description: nice to have for better UX\n* os: need to be shown during selection\n* robotType: need to be shown during selection\n* suits: []\n\n*Suit details contain:*\n\n* storage.snapshotUrl: needed to get suite script.\n* id: must be stored since this will be needed to run the test suite\n* name: needs to be stored for better UX\n* projectId: no need to store since its already retrieved via project id\n* showVideoParams: nice to show as info\n* suiteType: nice to show as info&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;projectId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/success_list_robots&quot;
+                }
+              }
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;UnAuthorized&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/auth_fail&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/next/project/{projectId}/job/{testSuiteId}/snapshot&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Copado Test Configuration&quot;
+        ],
+        &quot;summary&quot;: &quot;4) Get Suite Script&quot;,
+        &quot;description&quot;: &quot;# Retrieve the test suit script containing folders\n\nThis call will retrieve the CRT script for the test suite containing all robot script files separated with special characters and the file name.&lt;br /&gt; This call will be used to display the selected test suite details in the read-only editor on the Copado test record. &lt;br /&gt;&lt;br /&gt; &lt;b&gt;## Example:&lt;/b&gt;&lt;br /&gt; &lt;br /&gt; PK&lt;br /&gt; ���RX�KKK&lt;br /&gt; pace.robot*** Settings ***&lt;br /&gt;&lt;br /&gt;\nDocumentation           Test suite for Pace starter.&lt;br /&gt; Library                 QWeb&lt;br /&gt; Suite Setup             Open Browser    about:blank    chrome&lt;br /&gt; Suite Teardown          Close All Browsers&lt;br /&gt;&lt;br /&gt;\n*** Test Cases ***&lt;br /&gt;&lt;br /&gt;\nTest the home page&lt;br /&gt;\n    [Tags]              TE-0000009&lt;br /&gt;\n    [Documentation]     Go to the web shop, and verify that the slogan text appears on the page.&lt;br /&gt;\n    GoTo                https://qentinelqi.github.io/shop/&lt;br /&gt;\n    VerifyText          Find your spirit animal&lt;br /&gt;\n    \n*** Keywords ***&lt;br /&gt;&lt;br /&gt;\nHome&lt;br /&gt;\n    [Documentation]     Set the application state to the shop home page.&lt;br /&gt;\n    GoTo                https://qentinelqi.github.io/shop/PK&lt;br /&gt;&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;projectId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          },
+          {
+            &quot;name&quot;: &quot;testSuiteId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;,
+            &quot;content&quot;: {
+              &quot;application/octet-stream&quot;: {
+                &quot;schema&quot;: {
+                  &quot;type&quot;: &quot;string&quot;
+                }
+              }
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;UnAuthorized&quot;,
+            &quot;content&quot;: {
+              &quot;application/json&quot;: {
+                &quot;schema&quot;: {
+                  &quot;$ref&quot;: &quot;#/components/schemas/auth_fail&quot;
+                }
+              }
+            }
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/pace/v4/projects/{projectId}/jobs/{testSuiteId}/builds&quot;: {
+      &quot;post&quot;: {
+        &quot;tags&quot;: [
+          &quot;Test Execution&quot;
+        ],
+        &quot;summary&quot;: &quot;Run a Test Suite&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;projectId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          },
+          {
+            &quot;name&quot;: &quot;testSuiteId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          }
+        ],
+        &quot;requestBody&quot;: {
+          &quot;content&quot;: {
+            &quot;application/json&quot;: {
+              &quot;schema&quot;: {
+                &quot;$ref&quot;: &quot;#/components/schemas/build_request&quot;
+              }
+            }
+          },
+          &quot;required&quot;: true
+        },
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response&quot;
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    },
+    &quot;/pace/v4/projects/{projectId}/jobs/{testSuiteId}/builds/{buildNumber}&quot;: {
+      &quot;get&quot;: {
+        &quot;tags&quot;: [
+          &quot;Results&quot;
+        ],
+        &quot;summary&quot;: &quot;Get Job(Test) Result&quot;,
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;projectId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          },
+          {
+            &quot;name&quot;: &quot;testSuiteId&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          },
+          {
+            &quot;name&quot;: &quot;buildNumber&quot;,
+            &quot;in&quot;: &quot;path&quot;,
+            &quot;required&quot;: true,
+            &quot;style&quot;: &quot;simple&quot;,
+            &quot;explode&quot;: false,
+            &quot;schema&quot;: {
+              &quot;type&quot;: &quot;number&quot;,
+              &quot;format&quot;: &quot;double&quot;
+            }
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Successful response &lt;br/&gt;&lt;u&gt;Response is too big please test the endpoint by using \&quot;Try it out\&quot; button to see the response example&lt;/u&gt;&lt;br/&gt;&lt;b&gt;Details:&lt;/b&gt; &lt;a href=\&quot;https://help.pace.qentinel.com/docs/current/ui/suites/suitesresults.html\&quot;&gt;click to see&lt;/a&gt;&quot;
+          }
+        },
+        &quot;security&quot;: [
+          {
+            &quot;agent&quot;: []
+          }
+        ]
+      }
+    }
+  },
+  &quot;components&quot;: {
+    &quot;schemas&quot;: {
+      &quot;success_handshake&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;message&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;data&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;$ref&quot;: &quot;#/components/schemas/success_handshake_data&quot;
+            }
+          }
+        }
+      },
+      &quot;success_list_robots&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;message&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;data&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;$ref&quot;: &quot;#/components/schemas/project_robot_data&quot;
+            }
+          }
+        }
+      },
+      &quot;build_request&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;branch&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;buildSnapshotId&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;record&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;rerunFailedId&quot;: {
+            &quot;type&quot;: &quot;number&quot;,
+            &quot;format&quot;: &quot;double&quot;
+          },
+          &quot;runType&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;stream&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;
+          },
+          &quot;tag&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;inputParameters&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;$ref&quot;: &quot;#/components/schemas/input_parameters&quot;
+            }
+          }
+        }
+      },
+      &quot;input_parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;key&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;type&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;value&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      },
+      &quot;project_robot_data&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;number&quot;,
+            &quot;format&quot;: &quot;double&quot;
+          },
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;description&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;runEnvironment&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;fwVersion&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;createdDate&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;os&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;robotType&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;projectId&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;userId&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;reporting&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;suites&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;$ref&quot;: &quot;#/components/schemas/suite_details&quot;
+            }
+          }
+        }
+      },
+      &quot;suite_details&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;createdDate&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;externalRunUuid&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;storage&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;allOf&quot;: [
+              {
+                &quot;$ref&quot;: &quot;#/components/schemas/storage&quot;
+              }
+            ]
+          },
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;projectId&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;showVideoParams&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;
+          },
+          &quot;suiteType&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;robotId&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          }
+        }
+      },
+      &quot;storage&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;kind&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;snapshotPath&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;snapshotUrl&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      },
+      &quot;auth_fail&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;message&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      },
+      &quot;success_list_organization&quot;: {
+        &quot;type&quot;: &quot;array&quot;,
+        &quot;items&quot;: {
+          &quot;$ref&quot;: &quot;#/components/schemas/success_list_organization_items&quot;
+        }
+      },
+      &quot;success_list_projects&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;admin_role&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;assignments&quot;: {
+            &quot;type&quot;: &quot;array&quot;,
+            &quot;items&quot;: {
+              &quot;$ref&quot;: &quot;#/components/schemas/organization_project_assignment&quot;
+            }
+          }
+        }
+      },
+      &quot;organization_project_assignment&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;description&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;role&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;type&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;permissions&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;allOf&quot;: [
+              {
+                &quot;$ref&quot;: &quot;#/components/schemas/permissions&quot;
+              }
+            ]
+          }
+        }
+      },
+      &quot;permissions&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;edit&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;view&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      },
+      &quot;success_list_organization_items&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;can_edit&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;
+          },
+          &quot;can_view&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;
+          },
+          &quot;created&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;created_text&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;domain&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;insights&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;modified&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;modified_text&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;type&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;owner&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;allOf&quot;: [
+              {
+                &quot;$ref&quot;: &quot;#/components/schemas/crt_owner&quot;
+              }
+            ]
+          }
+        }
+      },
+      &quot;crt_owner&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;description&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;name&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      },
+      &quot;success_handshake_data&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;id&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;created&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;description&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;key&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;modified&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;sensitive&quot;: {
+            &quot;type&quot;: &quot;boolean&quot;
+          },
+          &quot;type&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;userId&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          },
+          &quot;value&quot;: {
+            &quot;type&quot;: &quot;string&quot;
+          }
+        }
+      }
+    },
+    &quot;securitySchemes&quot;: {
+      &quot;agent&quot;: {
+        &quot;type&quot;: &quot;apiKey&quot;,
+        &quot;description&quot;: &quot;Valid agent token&quot;,
+        &quot;name&quot;: &quot;X-AUTHORIZATION&quot;,
+        &quot;in&quot;: &quot;header&quot;
+      }
+    }
+  }
+}</schema>
+    <schemaType>OpenApi3</schemaType>
+    <schemaUploadFileExtension>json</schemaUploadFileExtension>
+    <schemaUploadFileName>Copado9-CopadoCRT-1.0.1-CRTQ2-resolved</schemaUploadFileName>
+    <serviceBinding>{&quot;host&quot;:&quot;api.qa.robotic.copado.com&quot;,&quot;basePath&quot;:&quot;&quot;,&quot;allowedSchemes&quot;:[&quot;HTTPS&quot;],&quot;requestMediaTypes&quot;:[],&quot;responseMediaTypes&quot;:[],&quot;compatibleMediaTypes&quot;:{&quot;application/octet-stream&quot;:&quot;application/json&quot;}}</serviceBinding>
+    <status>Complete</status>
+    <systemVersion>3</systemVersion>
+</ExternalServiceRegistration>
